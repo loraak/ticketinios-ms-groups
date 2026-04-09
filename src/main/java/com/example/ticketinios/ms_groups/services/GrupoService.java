@@ -33,11 +33,26 @@ public class GrupoService {
             .nombre(g.getNombre())
             .descripcion(g.getDescripcion())
             .creador(g.getCreadorNombre())
+            .creado_en(g.getCreadoEn())
             .integrantes(usuarioGrupoRepository.countByGrupoId(g.getId()))
             .activo(g.isActivo())
             .build()
         )
         .collect(Collectors.toList());
+    }
+
+    public GrupoDTO obtenerPorId(UUID grupoId) {
+        Grupo grupo = grupoRepository.findById(grupoId)
+            .orElseThrow(() -> new IllegalStateException("Grupo no encontrado"));
+    
+        return GrupoDTO.builder()
+            .id(grupo.getId())
+            .nombre(grupo.getNombre())
+            .descripcion(grupo.getDescripcion())
+            .creador(grupo.getCreadorNombre())
+            .creado_en(grupo.getCreadoEn())
+            .activo(grupo.isActivo())
+            .build();
     }
 
     public GrupoDTO crear(CreateGrupoRequest request) {

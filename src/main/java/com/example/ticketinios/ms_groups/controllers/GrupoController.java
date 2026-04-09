@@ -43,6 +43,17 @@ public class GrupoController {
             .build());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<GrupoDTO>> obtener(@PathVariable UUID id) {
+        GrupoDTO grupo = grupoService.obtenerPorId(id);
+
+        return ResponseEntity.ok(ApiResponse.<GrupoDTO>builder()
+            .statusCode(200)
+            .intOpCode("MS-GRUPOS-GET-OK")
+            .data(List.of(grupo))
+            .build());
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<GrupoDTO>> crear(@Valid @RequestBody CreateGrupoRequest request) {
         var grupo = grupoService.crear(request);
