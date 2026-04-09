@@ -20,6 +20,7 @@ import com.example.ticketinios.ms_groups.dto.ApiResponse;
 import com.example.ticketinios.ms_groups.dto.CreateGrupoRequest;
 import com.example.ticketinios.ms_groups.dto.GrupoDTO;
 import com.example.ticketinios.ms_groups.dto.UpdateGrupoRequest;
+import com.example.ticketinios.ms_groups.services.GrupoPermisoService;
 import com.example.ticketinios.ms_groups.services.GrupoService;
 
 import jakarta.validation.Valid;
@@ -30,6 +31,7 @@ import jakarta.validation.Valid;
 public class GrupoController {
 
     @Autowired private GrupoService grupoService;
+    @Autowired private GrupoPermisoService grupoPermisoService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<GrupoDTO>> listar(@RequestHeader("X-User-Id") String usuarioId) {
@@ -82,5 +84,22 @@ public class GrupoController {
                 .data(List.of())
                 .build());
         }
+    }
+
+    @GetMapping("/{grupoId}/permisos")
+    public ResponseEntity<ApiResponse<String>> obtenerPermisos(
+            @PathVariable UUID grupoId,
+            @RequestHeader("X-User-Id") String usuarioId) {
+        System.out.println("grupoId: " + grupoId);
+        System.out.println("usuarioId: " + usuarioId);
+        
+        var permisos = grupoPermisoService.obtenerPermisos(grupoId, UUID.fromString(usuarioId));
+        System.out.println("permisos encontrados: " + permisos);
+        
+        return ResponseEntity.ok(ApiResponse.<String>builder()
+            .statusCode(200)
+            .intOpCode("MS-GRUPOS-PERMISOS-OK")
+            .data(permisos)
+            .build());
     }
 }

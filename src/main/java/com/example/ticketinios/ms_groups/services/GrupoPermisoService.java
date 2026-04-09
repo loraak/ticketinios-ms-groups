@@ -27,7 +27,7 @@ public class GrupoPermisoService {
             throw new IllegalStateException("Solo el creador puede gestionar permisos");
     }
 
-    // Otorgar permiso a un usuario sobre un grupo
+    /* Otorgar permiso a un usuario sobre un grupo
     public void otorgarPermiso(UUID grupoId, UUID usuarioId, String permiso, UUID solicitanteId) {
         validarCreador(grupoId, solicitanteId);
 
@@ -42,6 +42,7 @@ public class GrupoPermisoService {
                 .build());
         }
     }
+    */
 
     // Revocar permiso
     public void revocarPermiso(UUID grupoId, UUID usuarioId, String permiso, UUID solicitanteId) {
@@ -53,7 +54,7 @@ public class GrupoPermisoService {
     public List<String> obtenerPermisos(UUID grupoId, UUID usuarioId) {
         return grupoPermisoRepository.findByGrupoIdAndUsuarioId(grupoId, usuarioId)
             .stream()
-            .map(GrupoPermiso::getPermisoId)
+            .map(gp -> gp.getPermiso().getNombre())
             .toList();
     }
 
