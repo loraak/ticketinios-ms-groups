@@ -47,6 +47,4 @@ public class Grupo {
     @CreationTimestamp
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;
-
-
 }

@@ -1,20 +1,25 @@
 package com.example.ticketinios.ms_groups.controllers;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ticketinios.ms_groups.dto.ApiResponse;
 import com.example.ticketinios.ms_groups.dto.CreateGrupoRequest;
 import com.example.ticketinios.ms_groups.dto.GrupoDTO;
+import com.example.ticketinios.ms_groups.dto.UpdateGrupoRequest;
 import com.example.ticketinios.ms_groups.services.GrupoService;
 
 import jakarta.validation.Valid;
@@ -27,8 +32,10 @@ public class GrupoController {
     @Autowired private GrupoService grupoService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<GrupoDTO>> listar() {
-        var data = grupoService.listar();
+    public ResponseEntity<ApiResponse<GrupoDTO>> listar(@RequestHeader("X-User-Id") String usuarioId) {
+        System.out.println("X-User-Id recibido: " + usuarioId);
+        
+        var data = grupoService.listar(UUID.fromString(usuarioId));
         return ResponseEntity.ok(ApiResponse.<GrupoDTO>builder()
             .statusCode(200)
             .intOpCode("MS-GRUPOS-LIST-OK")
@@ -44,5 +51,25 @@ public class GrupoController {
             .intOpCode("MS-GRUPOS-CREATE-OK")
             .data(List.of(grupo))
             .build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<GrupoDTO>> actualizar(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateGrupoRequest request) {
+        try {
+            var grupo = grupoService.actualizar(id, request);
+            return ResponseEntity.ok(ApiResponse.<GrupoDTO>builder()
+                .statusCode(200)
+                .intOpCode("MS-GRUPOS-UPDATE-OK")
+                .data(List.of(grupo))
+                .build());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.<GrupoDTO>builder()
+                .statusCode(404)
+                .intOpCode("MS-GRUPOS-UPDATE-NOT-FOUND")
+                .data(List.of())
+                .build());
+        }
     }
 }

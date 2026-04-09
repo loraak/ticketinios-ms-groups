@@ -9,7 +9,7 @@ public record GrupoDTO(
     UUID id,
     String nombre,
     String descripcion,
-    String autor,       
+    String creador,       
     int integrantes,     
     boolean activo
 ) {}

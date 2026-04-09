@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.ticketinios.ms_groups.dto.CreateGrupoRequest;
 import com.example.ticketinios.ms_groups.dto.GrupoDTO;
+import com.example.ticketinios.ms_groups.dto.UpdateGrupoRequest;
 import com.example.ticketinios.ms_groups.models.Grupo;
 import com.example.ticketinios.ms_groups.models.UsuarioGrupo;
 import com.example.ticketinios.ms_groups.repositories.GrupoRepository;
@@ -21,18 +22,22 @@ public class GrupoService {
     @Autowired private GrupoRepository grupoRepository;
     @Autowired private UsuarioGrupoRepository usuarioGrupoRepository;
 
-    public List<GrupoDTO> listar() {
-        return grupoRepository.findAll().stream()
-            .map(g -> GrupoDTO.builder()
-                .id(g.getId())
-                .nombre(g.getNombre())
-                .descripcion(g.getDescripcion())
-                .autor(g.getCreadorNombre())       
-                .integrantes(usuarioGrupoRepository.countByGrupoId(g.getId()))
-                .activo(g.isActivo())
-                .build()
-            )
-            .collect(Collectors.toList());
+    public List<GrupoDTO> listar(UUID usuarioId) {
+        List<UUID> grupoIds = usuarioGrupoRepository.findGrupoIdsByUsuarioId(usuarioId);
+        System.out.println("grupoIds encontrados: " + grupoIds);
+        if (grupoIds.isEmpty()) return List.of();
+
+        return grupoRepository.findAllById(grupoIds).stream()
+        .map(g -> GrupoDTO.builder()
+            .id(g.getId())
+            .nombre(g.getNombre())
+            .descripcion(g.getDescripcion())
+            .creador(g.getCreadorNombre())
+            .integrantes(usuarioGrupoRepository.countByGrupoId(g.getId()))
+            .activo(g.isActivo())
+            .build()
+        )
+        .collect(Collectors.toList());
     }
 
     public GrupoDTO crear(CreateGrupoRequest request) {
@@ -56,9 +61,27 @@ public class GrupoService {
             .id(saved.getId())
             .nombre(saved.getNombre())
             .descripcion(saved.getDescripcion())
-            .autor(saved.getCreadorNombre())
+            .creador(saved.getCreadorNombre())
             .integrantes(1)
             .activo(saved.isActivo())
             .build();
     }
+
+    public GrupoDTO actualizar(UUID id, UpdateGrupoRequest request) {
+    Grupo grupo = grupoRepository.findById(id)
+        .orElseThrow(() -> new IllegalStateException("Grupo no encontrado."));
+
+    grupo.setNombre(request.nombre());
+    grupo.setDescripcion(request.descripcion());
+    grupoRepository.save(grupo);
+
+    return GrupoDTO.builder()
+        .id(grupo.getId())
+        .nombre(grupo.getNombre())
+        .descripcion(grupo.getDescripcion())
+        .creador(grupo.getCreadorNombre())
+        .integrantes(usuarioGrupoRepository.countByGrupoId(grupo.getId()))
+        .activo(grupo.isActivo())
+        .build();
+}
 }
