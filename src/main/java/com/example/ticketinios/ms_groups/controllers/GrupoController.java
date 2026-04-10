@@ -1,6 +1,7 @@
 package com.example.ticketinios.ms_groups.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.ticketinios.ms_groups.dto.ApiResponse;
 import com.example.ticketinios.ms_groups.dto.CreateGrupoRequest;
 import com.example.ticketinios.ms_groups.dto.GrupoDTO;
+import com.example.ticketinios.ms_groups.dto.MiembroDTO;
 import com.example.ticketinios.ms_groups.dto.UpdateGrupoRequest;
 import com.example.ticketinios.ms_groups.services.GrupoPermisoService;
 import com.example.ticketinios.ms_groups.services.GrupoService;
@@ -100,6 +103,41 @@ public class GrupoController {
             .statusCode(200)
             .intOpCode("MS-GRUPOS-PERMISOS-OK")
             .data(permisos)
+            .build());
+    }
+
+    @PatchMapping("/estado/{id}") 
+    public ResponseEntity<ApiResponse<Map<String, String>>> darDeBaja(@PathVariable UUID id) { 
+        try { 
+            boolean estaActivo = grupoService.darDeBaja(id);
+            String accion = estaActivo ? "alta" : "baja";
+
+            ApiResponse<Map<String, String>> response = ApiResponse.<Map<String, String>> builder()
+                .statusCode(200)
+                .intOpCode("MS-GRUPOS-ESTADO-OK")
+                .data(List.of(Map.of("message", "Grupo dado de " + accion + " exitosamente")))
+                .build(); 
+
+            return ResponseEntity.ok(response); 
+
+        } catch (IllegalStateException e) {
+            ApiResponse<Map<String, String>> error = ApiResponse.<Map<String, String>>builder()
+                .statusCode(404)
+                .intOpCode("MS-GRUPOS-NOT-FOUND")
+                .data(List.of(Map.of("message", e.getMessage())))
+                .build();
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+    }
+
+    @GetMapping("/{grupoId}/miembros")
+    public ResponseEntity<ApiResponse<MiembroDTO>> obtenerMiembros(@PathVariable UUID grupoId) {
+        var miembros = grupoService.obtenerMiembros(grupoId);
+        return ResponseEntity.ok(ApiResponse.<MiembroDTO>builder()
+            .statusCode(200)
+            .intOpCode("MS-GRUPOS-MIEMBROS-OK")
+            .data(miembros)
             .build());
     }
 }

@@ -36,5 +36,5 @@ public class GrupoPermiso {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "permiso_id", nullable = false)
-    private Permiso permiso; // ← relación con la entidad Permiso
+    private Permiso permiso; 
 }

@@ -15,4 +15,8 @@ public interface UsuarioGrupoRepository extends JpaRepository<UsuarioGrupo, UUID
 
     @Query("SELECT ug.grupoId FROM UsuarioGrupo ug WHERE ug.usuarioId = :usuarioId")
     List<UUID> findGrupoIdsByUsuarioId(@Param("usuarioId") UUID usuarioId);
+
+    List<UUID> findUsuarioIdsByGrupoId(@Param("grupoId") UUID grupoId); 
+
+    List<UsuarioGrupo> findByGrupoId(UUID grupoId);
 }

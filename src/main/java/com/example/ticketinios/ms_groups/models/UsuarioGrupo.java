@@ -30,6 +30,9 @@ public class UsuarioGrupo {
     @Column(name = "usuario_id", nullable = false, columnDefinition = "uuid")
     private UUID usuarioId;
 
+    @Column(name = "nombre_completo", length = 200)
+    private String nombreCompleto;
+
     @Column(name = "grupo_id", nullable = false, columnDefinition = "uuid")
     private UUID grupoId;
 

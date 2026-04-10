@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.example.ticketinios.ms_groups.models.Grupo;
-import com.example.ticketinios.ms_groups.models.GrupoPermiso;
 import com.example.ticketinios.ms_groups.repositories.GrupoPermisoRepository;
 import com.example.ticketinios.ms_groups.repositories.GrupoRepository;
 

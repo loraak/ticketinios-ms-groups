@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.ticketinios.ms_groups.dto.CreateGrupoRequest;
 import com.example.ticketinios.ms_groups.dto.GrupoDTO;
+import com.example.ticketinios.ms_groups.dto.MiembroDTO;
 import com.example.ticketinios.ms_groups.dto.UpdateGrupoRequest;
 import com.example.ticketinios.ms_groups.models.Grupo;
 import com.example.ticketinios.ms_groups.models.UsuarioGrupo;
@@ -39,6 +40,12 @@ public class GrupoService {
             .build()
         )
         .collect(Collectors.toList());
+    }
+
+    public List<MiembroDTO> obtenerMiembros(UUID grupoId) {
+        return usuarioGrupoRepository.findByGrupoId(grupoId).stream()
+            .map(ug -> new MiembroDTO(ug.getUsuarioId(), ug.getNombreCompleto()))
+            .toList();
     }
 
     public GrupoDTO obtenerPorId(UUID grupoId) {
@@ -99,4 +106,14 @@ public class GrupoService {
         .activo(grupo.isActivo())
         .build();
 }
+
+    public boolean darDeBaja(UUID id) { 
+        Grupo grupo = grupoRepository.findById(id)
+            .orElseThrow(() -> new IllegalStateException("Grupo no encontrado.")); 
+            
+        boolean nuevoEstado = !grupo.isActivo();
+        grupo.setActivo(nuevoEstado);
+        grupoRepository.save(grupo);
+        return nuevoEstado; 
+    }
 }
