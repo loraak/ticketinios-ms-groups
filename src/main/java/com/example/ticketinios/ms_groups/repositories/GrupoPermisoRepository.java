@@ -11,9 +11,11 @@ public interface GrupoPermisoRepository extends JpaRepository<GrupoPermiso, UUID
 
     List<GrupoPermiso> findByGrupoIdAndUsuarioId(UUID grupoId, UUID usuarioId);
 
-    boolean existsByGrupoIdAndUsuarioIdAndPermisoId(UUID grupoId, UUID usuarioId, String permisoId);
+    boolean existsByGrupoIdAndUsuarioIdAndPermisoNombre(UUID grupoId, UUID usuarioId, String nombre);
 
-    void deleteByGrupoIdAndUsuarioIdAndPermisoId(UUID grupoId, UUID usuarioId, String permisoId);
+    void deleteByGrupoIdAndUsuarioIdAndPermisoNombre(UUID grupoId, UUID usuarioId, String nombre);
 
     List<GrupoPermiso> findByGrupoId(UUID grupoId);
+
+    void deleteByGrupoIdAndUsuarioId(UUID grupoId, UUID usuarioId);
 }

@@ -19,4 +19,8 @@ public interface UsuarioGrupoRepository extends JpaRepository<UsuarioGrupo, UUID
     List<UUID> findUsuarioIdsByGrupoId(@Param("grupoId") UUID grupoId); 
 
     List<UsuarioGrupo> findByGrupoId(UUID grupoId);
+
+    boolean existsByGrupoIdAndUsuarioId(UUID grupoId, UUID usuarioId);
+    
+    void deleteByGrupoIdAndUsuarioId(UUID grupoId, UUID usuarioId);
 }
