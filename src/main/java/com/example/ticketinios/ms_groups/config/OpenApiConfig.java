@@ -24,7 +24,7 @@ public class OpenApiConfig {
                 .description("Microservicio de autenticación"))
             .servers(List.of(
                 new Server()
-                    .url("http://localhost:3000")
+                    .url("https://ticketinios-apigateway-production.up.railway.app")
                     .description("API Gateway (local)")
             ))
             .addSecurityItem(new SecurityRequirement().addList("Bearer Auth"))
