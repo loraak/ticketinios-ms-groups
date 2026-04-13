@@ -248,4 +248,25 @@ public class GrupoController {
                     .build());
         }
     }
+
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<ApiResponse<GrupoDTO>> actualizarAdmin(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateGrupoRequest request,
+            @RequestHeader("X-User-Id") String usuarioId) {
+        try {
+            var grupo = grupoService.actualizar(id, request);
+            return ResponseEntity.ok(ApiResponse.<GrupoDTO>builder()
+                .statusCode(200)
+                .intOpCode("MS-GRUPOS-UPDATE-OK")
+                .data(List.of(grupo))
+                .build());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.<GrupoDTO>builder()
+                .statusCode(404)
+                .intOpCode("MS-GRUPOS-UPDATE-NOT-FOUND")
+                .data(List.of())
+                .build());
+        }
+    }
 }

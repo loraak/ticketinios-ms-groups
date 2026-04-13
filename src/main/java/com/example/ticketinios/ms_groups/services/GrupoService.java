@@ -39,6 +39,7 @@ public class GrupoService {
         "grupos:eliminar",
         "tickets:crear",
         "tickets:editar",
+        "tickets:ver", 
         "tickets:eliminar",
         "tickets:comentario"
     );
